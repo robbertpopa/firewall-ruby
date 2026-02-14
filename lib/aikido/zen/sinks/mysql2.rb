@@ -1,0 +1,31 @@
+# frozen_string_literal: true
+
+module Aikido::Zen
+  module Sinks
+    module Mysql2
+      SINK = Sinks.add("mysql2", scanners: [Scanners::SQLInjectionScanner])
+
+      module Helpers
+        def self.scan(query, operation)
+          SINK.scan(query: query, dialect: :mysql, operation: operation)
+        end
+      end
+
+      def self.load_sinks!
+        if Aikido::Zen.satisfy "mysql2"
+          require "mysql2"
+
+          ::Mysql2::Client.class_eval do
+            extend Sinks::DSL
+
+            sink_before :query do |sql|
+              Helpers.scan(sql, "query")
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+Aikido::Zen::Sinks::Mysql2.load_sinks!
