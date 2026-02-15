@@ -148,6 +148,52 @@ module Aikido::Zen
       end
     end
 
+    class NoSQLInjectionAttack < Attack
+      attr_reader :collection
+      attr_reader :scan_context
+      attr_reader :reason
+      attr_reader :key
+      attr_reader :location
+      attr_reader :shape
+
+      def initialize(collection:, scan_context:, reason:, key:, location:, shape:, **opts)
+        super(**opts)
+        @collection = collection
+        @scan_context = scan_context
+        @reason = reason
+        @key = key
+        @location = location
+        @shape = shape
+      end
+
+      def humanized_name
+        "NoSQL injection"
+      end
+
+      def kind
+        "nosql_injection"
+      end
+
+      def input
+        {}
+      end
+
+      def metadata
+        {
+          collection: @collection,
+          context: @scan_context,
+          reason: @reason,
+          key: @key,
+          location: @location,
+          shape: @shape
+        }.compact
+      end
+
+      def exception(*)
+        NoSQLInjectionError.new(self)
+      end
+    end
+
     class SSRFAttack < Attack
       attr_reader :input
       attr_reader :request
