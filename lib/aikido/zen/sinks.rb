@@ -33,5 +33,6 @@ require_relative "sinks/mysql2"
 require_relative "sinks/pg"
 require_relative "sinks/sqlite3"
 require_relative "sinks/trilogy"
+require_relative "sinks/mongo"
 
 # :nocov:
